@@ -39,6 +39,7 @@ var (
 	verbose = flag.Bool("v", false, "Verbose - print lots of stuff")
 	outfile = flag.String("outfmt", "gotemplate_%v", "the format of the output file; must contain a single instance of the %v verb\n"+
 		"\twhich will be replaced with the template instance name")
+	buildtags = flag.String("tags", "", "+build tags")
 )
 
 // Logging function

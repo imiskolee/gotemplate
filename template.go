@@ -162,6 +162,14 @@ func replaceIdentifier(f *ast.File, old, new string) {
 			// which is a bit untidy if we weren't
 			// replacing with an identifier
 			if x.Name == old {
+				if f.Comments != nil {
+					for _, v := range f.Comments {
+						for i, vv := range v.List {
+							vv.Text = strings.Replace(vv.Text, "swagger:type "+x.Name, "swagger:type "+new, -1)
+							v.List[i] = vv
+						}
+					}
+				}
 				x.Name = new
 			}
 		}
@@ -315,10 +323,14 @@ func (t *template) parse(inputFile string) {
 	}
 
 	format()
+	tags := ""
+	if len(*buildtags) > 0 {
+		tags = fmt.Sprintf("//+build %s\n\n", *buildtags)
+	}
 
 	// bit gross to inject the header this way... but in the spirit of
 	// minimal changes et al...
-	fset, f = parseFile(outputFileName, genHeader+b.String())
+	fset, f = parseFile(outputFileName, genHeader+tags+b.String())
 
 	format()
 
